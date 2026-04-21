@@ -155,3 +155,17 @@ describe('applyAttribution — client profile suppression', () => {
     expect(result.warned).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Unknown platform fallback
+// ---------------------------------------------------------------------------
+
+describe('applyAttribution — unknown platform fallback', () => {
+  it('uses 500-char limit for platforms not in the known list', () => {
+    const content = 'a'.repeat(460);
+    const result = applyAttribution({ content, platform: 'threads', attribution: true });
+    // footer is 16 chars; 460 + 1 (newline) + 15 = 476 < 500 → footer applied
+    expect(result.content).toContain('📮 postlane.dev');
+    expect(result.warned).toBe(false);
+  });
+});

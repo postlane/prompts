@@ -156,6 +156,31 @@ describe('runDraftChangelog — one tag fallback', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Two-tag auto-derive (no explicit from/to)
+// ---------------------------------------------------------------------------
+
+describe('runDraftChangelog — two-tag auto-derive', () => {
+  it('derives from/to from the two most recent tags when none are passed explicitly', async () => {
+    const git = makeGitRunner({
+      latestTags: vi.fn().mockReturnValue(['v0.3.1', 'v0.4.0']),
+    });
+    const llm = makeLlmRunner();
+
+    await runDraftChangelog({
+      // No explicit from/to
+      repoPath: '/fake/repo',
+      skillPath: '/fake/prompts/commands/draft-changelog.md',
+      git,
+      llm,
+    });
+
+    expect(git.log).toHaveBeenCalledWith(
+      expect.objectContaining({ from: 'v0.3.1', to: 'v0.4.0' }),
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
 // 7.1.6 — test 3: no tags → error, no crash, no silent failure
 // ---------------------------------------------------------------------------
 

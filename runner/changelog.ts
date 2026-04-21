@@ -45,25 +45,10 @@ function resolveRange(
   }
 
   if (tags.length === 1) {
-    const tag = tags[0];
-    if (tag === undefined) {
-      throw new ChangelogError(
-        'No tags found. Tag your release first with `git tag v0.1.0`.',
-      );
-    }
-    return { from: initialCommit, to: tag };
+    return { from: initialCommit, to: tags[0] as string };
   }
 
-  const penultimate = tags[tags.length - 2];
-  const latest = tags[tags.length - 1];
-
-  if (penultimate === undefined || latest === undefined) {
-    throw new ChangelogError(
-      'No tags found. Tag your release first with `git tag v0.1.0`.',
-    );
-  }
-
-  return { from: penultimate, to: latest };
+  return { from: tags.at(-2) as string, to: tags.at(-1) as string };
 }
 
 export async function runDraftChangelog(
