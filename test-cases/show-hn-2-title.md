@@ -1,0 +1,1 @@
+Show HN: I built a tool to stop copy-pasting git logs into social media drafts

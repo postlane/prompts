@@ -1,0 +1,1 @@
+Postlane connects your git history to your social channels. Run /draft-post in Claude Code after a commit and it reads your recent changes, applies your voice guide, and drafts platform-specific posts for X, Bluesky, and Mastodon. No dashboard required.

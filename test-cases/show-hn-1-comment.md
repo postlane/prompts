@@ -1,0 +1,5 @@
+Postlane is a desktop app and CLI that lets developers draft social posts directly from their IDE using Claude Code slash commands. You run /draft-post after a commit, the skill file reads your git log and voice guide, and the LLM writes platform-specific posts for X, Bluesky, and Mastodon. The app handles scheduling via Zernio; no context switching to a social media dashboard.
+
+The interesting technical decision was keeping the LLM entirely on the client side. The app never sees your post content — the slash command runs in your IDE session and writes draft files to .postlane/posts/. The desktop app only moves files to the scheduler. This means it works with any Anthropic-compatible model you already have credentials for.
+
+Currently in private beta with a public CLI available at https://postlane.dev. Looking for feedback on the runner architecture and whether the voice guide approach (a short markdown file describing your writing style) is the right abstraction for maintaining consistent tone across posts.
