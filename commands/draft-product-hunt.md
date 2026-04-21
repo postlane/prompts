@@ -52,4 +52,11 @@ Mac, Windows, Linux, Mobile, Scheduling, Content Creation, Email
 
 ## Voice
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply to all output — more strictly on tagline and description than anywhere else.
+Never use these phrases — more strictly enforced on tagline and description than anywhere else:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"

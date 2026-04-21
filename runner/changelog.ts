@@ -78,6 +78,7 @@ export async function runDraftChangelog(
 
   const gitLog = git.log({ repoPath, from: range.from, to: range.to });
   const diffStat = git.diffStat({ repoPath, from: range.from, to: range.to });
+  const tagAnnotation = git.tagAnnotation({ repoPath, tag: range.to });
 
   const skillContent = await readSkillFile(skillPath);
 
@@ -86,11 +87,18 @@ export async function runDraftChangelog(
     `Range: ${range.from}..${range.to}`,
     `Commits:\n${gitLog}`,
     `Changes:\n${diffStat}`,
+    tagAnnotation ? `Tag annotation:\n${tagAnnotation}` : null,
   ]
     .filter(Boolean)
     .join('\n\n');
 
   const llmResponse = await llm.complete(prompt);
+
+  if (llmResponse.length > 50_000) {
+    throw new ChangelogError(
+      `LLM response exceeded maximum length (${llmResponse.length} chars). The model may have hallucinated. Try again.`,
+    );
+  }
 
   const slug = versionSlug(range.to);
   const postFolder = `${datestamp()}-${slug}-changelog`;

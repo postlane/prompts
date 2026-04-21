@@ -192,8 +192,9 @@ describe('Product Hunt test cases', () => {
     it('topics are from the embedded taxonomy', () => {
       const VALID_TOPICS = [
         'Developer Tools', 'Productivity', 'Open Source', 'CLI', 'Design Tools',
-        'SaaS', 'Artificial Intelligence', 'No-Code', 'Workflow Automation',
-        'Tech', 'Writing', 'Marketing', 'Analytics', 'API', 'DevOps',
+        'Writing Tools', 'Marketing', 'Social Media Tools', 'Analytics', 'No-Code',
+        'Automation', 'API', 'SaaS', 'Mac', 'Windows', 'Linux', 'Mobile',
+        'Scheduling', 'Content Creation', 'Email',
       ];
       const topics = readFixture('ph-1-topics.md')
         .split('\n')
@@ -217,5 +218,97 @@ describe('Product Hunt test cases', () => {
     it('maker comment has no forbidden phrases', () => {
       assertNoForbiddenPhrases(readFixture('ph-1-maker-comment.md'), 'ph-1-maker-comment.md');
     });
+  });
+
+  describe('test-case-2: pgwatch', () => {
+    it('tagline is 60 characters or fewer', () => {
+      const tagline = readFixture('ph-2-tagline.md').trim();
+      expect([...tagline].length).toBeLessThanOrEqual(60);
+    });
+
+    it('description is 260 characters or fewer', () => {
+      const desc = readFixture('ph-2-description.md').trim();
+      expect([...desc].length).toBeLessThanOrEqual(260);
+    });
+
+    it('maker comment has four paragraphs', () => {
+      const comment = readFixture('ph-2-maker-comment.md').trim();
+      const paragraphs = comment.split(/\n\n+/).filter(p => p.trim().length > 0);
+      expect(paragraphs.length).toBe(4);
+    });
+
+    it('maker comment has no bullet points', () => {
+      const comment = readFixture('ph-2-maker-comment.md');
+      expect(comment).not.toMatch(/^[-*•]\s/m);
+    });
+
+    it('topics are from the embedded taxonomy', () => {
+      const VALID_TOPICS = [
+        'Developer Tools', 'Productivity', 'Open Source', 'CLI', 'Design Tools',
+        'Writing Tools', 'Marketing', 'Social Media Tools', 'Analytics', 'No-Code',
+        'Automation', 'API', 'SaaS', 'Mac', 'Windows', 'Linux', 'Mobile',
+        'Scheduling', 'Content Creation', 'Email',
+      ];
+      const topics = readFixture('ph-2-topics.md')
+        .split('\n')
+        .map(l => l.replace(/^[-*•\s]+/, '').trim())
+        .filter(l => l.length > 0);
+      for (const topic of topics) {
+        expect(VALID_TOPICS, `"${topic}" is not in the embedded PH taxonomy`).toContain(topic);
+      }
+    });
+
+    it('no forbidden phrases', () => {
+      assertNoForbiddenPhrases(readFixture('ph-2-tagline.md'), 'ph-2-tagline.md');
+      assertNoForbiddenPhrases(readFixture('ph-2-description.md'), 'ph-2-description.md');
+      assertNoForbiddenPhrases(readFixture('ph-2-maker-comment.md'), 'ph-2-maker-comment.md');
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Negative test: bad Show HN comment catches violations
+// ---------------------------------------------------------------------------
+
+function validateShowHnComment(content: string): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  const paragraphs = content.trim().split(/\n\n+/).filter(p => p.trim().length > 0);
+  if (paragraphs.length > 3) {
+    errors.push(`Comment has ${paragraphs.length} paragraphs (max 3)`);
+  }
+  if (/^[-*•]\s/m.test(content) || /^\d+\.\s/m.test(content)) {
+    errors.push('Comment contains bullet points or numbered list');
+  }
+  const lower = content.toLowerCase();
+  for (const phrase of FORBIDDEN_PHRASES) {
+    if (lower.includes(phrase)) {
+      errors.push(`Comment contains forbidden phrase: "${phrase}"`);
+    }
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+describe('negative test: bad Show HN comment', () => {
+  it('show-hn-bad-comment.md fails paragraph count check', () => {
+    const result = validateShowHnComment(readFixture('show-hn-bad-comment.md'));
+    const paragraphError = result.errors.find(e => e.includes('paragraphs'));
+    expect(paragraphError).toBeDefined();
+  });
+
+  it('show-hn-bad-comment.md fails bullet point check', () => {
+    const result = validateShowHnComment(readFixture('show-hn-bad-comment.md'));
+    const bulletError = result.errors.find(e => e.includes('bullet'));
+    expect(bulletError).toBeDefined();
+  });
+
+  it('show-hn-bad-comment.md fails forbidden phrase check', () => {
+    const result = validateShowHnComment(readFixture('show-hn-bad-comment.md'));
+    const phraseError = result.errors.find(e => e.includes('forbidden phrase'));
+    expect(phraseError).toBeDefined();
+  });
+
+  it('show-hn-1-comment.md passes all checks', () => {
+    const result = validateShowHnComment(readFixture('show-hn-1-comment.md'));
+    expect(result.valid).toBe(true);
   });
 });

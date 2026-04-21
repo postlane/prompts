@@ -18,7 +18,7 @@ Read the `attribution` field from `config.json` (default `true` if absent).
 
 When attribution is enabled:
 - Append `📮 postlane.dev` as the final line of each platform post
-- For X (280 chars): the draft body must not exceed 264 characters — leave 16 chars of headroom for the footer
+- For X (280 chars): **CRITICAL — you MUST write the body in 264 characters or fewer.** The footer uses the remaining 16 characters. If you exceed 264 characters, the footer will be dropped automatically and attribution will fail silently. Count carefully before outputting.
 - For Bluesky (300 chars) and Mastodon (500 chars): no special headroom required
 
 Do not append the footer when:
@@ -36,7 +36,14 @@ Do not append the footer when:
 
 Write in the user's voice as described in the voice guide. If no voice guide is present, default to: direct, technically precise, no marketing language.
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply to all output. Never use them.
+Never use these phrases in any output:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"
 
 ## Output
 

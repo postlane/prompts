@@ -1,0 +1,1 @@
+Monitor your Postgres queries in real time from the terminal

@@ -1,0 +1,1 @@
+pgwatch is a lightweight CLI that streams slow query logs, lock waits, and connection counts as they happen. No dashboard to configure, no retention policy. Pipe the output anywhere.

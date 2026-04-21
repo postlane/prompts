@@ -232,3 +232,106 @@ describe('version slug derivation', () => {
     expect(result.postFolder).toContain('v1102');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Tag annotation injection
+// ---------------------------------------------------------------------------
+
+describe('runDraftChangelog — tag annotation', () => {
+  it('includes tag annotation in the LLM prompt when present', async () => {
+    const git = makeGitRunner();
+    const llm = makeLlmRunner();
+
+    await runDraftChangelog({
+      from: 'v0.3.1',
+      to: 'v0.4.0',
+      repoPath: '/fake/repo',
+      skillPath: '/fake/prompts/commands/draft-changelog.md',
+      git,
+      llm,
+    });
+
+    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(promptArg).toContain('Tag annotation');
+    expect(promptArg).toContain(TAG_ANNOTATION);
+  });
+
+  it('omits the tag annotation section when annotation is empty', async () => {
+    const git = makeGitRunner({
+      tagAnnotation: vi.fn().mockReturnValue(''),
+    });
+    const llm = makeLlmRunner();
+
+    await runDraftChangelog({
+      from: 'v0.3.1',
+      to: 'v0.4.0',
+      repoPath: '/fake/repo',
+      skillPath: '/fake/prompts/commands/draft-changelog.md',
+      git,
+      llm,
+    });
+
+    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(promptArg).not.toContain('Tag annotation');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// LLM response length guard
+// ---------------------------------------------------------------------------
+
+describe('runDraftChangelog — response length guard', () => {
+  it('throws ChangelogError when LLM response exceeds 50,000 chars', async () => {
+    const git = makeGitRunner();
+    const llm: LlmRunner = {
+      complete: vi.fn().mockResolvedValue('a'.repeat(50_001)),
+    };
+
+    await expect(
+      runDraftChangelog({
+        from: 'v0.3.1',
+        to: 'v0.4.0',
+        repoPath: '/fake/repo',
+        skillPath: '/fake/prompts/commands/draft-changelog.md',
+        git,
+        llm,
+      }),
+    ).rejects.toThrow(/LLM response exceeded maximum length/);
+  });
+
+  it('includes the actual length in the error message', async () => {
+    const git = makeGitRunner();
+    const llm: LlmRunner = {
+      complete: vi.fn().mockResolvedValue('a'.repeat(50_001)),
+    };
+
+    await expect(
+      runDraftChangelog({
+        from: 'v0.3.1',
+        to: 'v0.4.0',
+        repoPath: '/fake/repo',
+        skillPath: '/fake/prompts/commands/draft-changelog.md',
+        git,
+        llm,
+      }),
+    ).rejects.toThrow('50001 chars');
+  });
+
+  it('does not throw when response is exactly 50,000 chars', async () => {
+    const git = makeGitRunner();
+    const llm: LlmRunner = {
+      complete: vi.fn().mockResolvedValue('a'.repeat(50_000)),
+    };
+
+    await expect(
+      runDraftChangelog({
+        from: 'v0.3.1',
+        to: 'v0.4.0',
+        repoPath: '/fake/repo',
+        skillPath: '/fake/prompts/commands/draft-changelog.md',
+        git,
+        llm,
+      }),
+    ).resolves.toBeDefined();
+  });
+});

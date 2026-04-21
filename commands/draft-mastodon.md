@@ -20,4 +20,11 @@ Content warnings (CW): use them for topics that are sensitive, controversial, or
 - Cross-posting X content verbatim without editing for this audience
 - Overt calls to sign up or pay for something
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply to all output.
+Never use these phrases in any output:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"

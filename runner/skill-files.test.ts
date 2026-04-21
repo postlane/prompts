@@ -36,7 +36,13 @@ const FORBIDDEN_PHRASES = [
 ];
 
 function assertNoForbiddenPhrases(content: string, fileName: string): void {
-  const lower = content.toLowerCase();
+  // Strip "never use these phrases" instruction blocks so the listed phrases
+  // don't trigger false positives — we're checking output language, not instructions.
+  const stripped = content.replace(
+    /never use these phrases[^\n]*\n(?:\s*[-*][^\n]*\n?)*/gi,
+    '',
+  );
+  const lower = stripped.toLowerCase();
   for (const phrase of FORBIDDEN_PHRASES) {
     expect(lower, `${fileName} must not contain "${phrase}"`).not.toContain(phrase);
   }

@@ -12,7 +12,7 @@ You are revising an existing draft post based on a user instruction. You are not
 
 **Step 3.** Read `original.json` from the same folder if present, for context about the original LLM draft.
 
-**Step 4.** Apply the instruction. Maintain the voice rules and platform character limits from `base/system-prompt.md`. Do not re-read git context — this is a revision, not a new draft.
+**Step 4.** Apply the instruction. Maintain the voice rules and platform character limits defined below. Do not re-read git context — this is a revision, not a new draft.
 
 **Step 5.** Write the revised posts back to the same `.md` files in place, overwriting them.
 
@@ -26,4 +26,11 @@ You are revising an existing draft post based on a user instruction. You are not
 
 Do not change the platforms list, the post folder name, or any field in `meta.json` other than `status`. Do not fetch new git context or re-read the changelog. This is a targeted revision, not a re-draft.
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply to all output.
+Never use these phrases in any output:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"

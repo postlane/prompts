@@ -29,4 +29,11 @@ Links at the end of the post perform better than links mid-post on LinkedIn. Lin
 - Exclamation marks
 - Overt self-promotion without substance
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply more strictly on LinkedIn than on any other platform.
+Never use these phrases — they are more strictly enforced on LinkedIn than anywhere else:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"

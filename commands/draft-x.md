@@ -20,4 +20,11 @@ Hashtags: two maximum, only when they are genuinely relevant and discoverable. D
 - Ending with a generic call to action ("What do you think?", "Let me know in the replies")
 - Mid-post URLs — put the link at the end
 
-The seven forbidden phrases defined in `base/system-prompt.md` apply to all output.
+Never use these phrases in any output:
+- "excited to share" / "thrilled to announce"
+- "game-changing" / "revolutionary" / "groundbreaking"
+- "dive into" / "delve into"
+- "leverage" (as a verb)
+- "seamlessly"
+- "the future of [category]"
+- any sentence starting with "I'm proud to"
