@@ -71,8 +71,9 @@ describe('applyAttribution — X platform, body too long for footer (truncation)
     expect([...result.content].length).toBe(280);
     // body line: 264 'a' chars + '…' = 265 codepoints
     const lines = result.content.split('\n');
-    expect([...lines[0]].length).toBe(265);
-    expect(lines[0]).toMatch(/^a{264}…$/);
+    const firstLine = lines[0] ?? '';
+    expect([...firstLine].length).toBe(265);
+    expect(firstLine).toMatch(/^a{264}…$/);
   });
 
   it('truncates and appends footer when body is 300 chars, total = 280', () => {

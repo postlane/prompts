@@ -121,7 +121,7 @@ describe('runDraftChangelog — happy path', () => {
       llm,
     });
 
-    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const promptArg: string = ((llm.complete as ReturnType<typeof vi.fn>).mock.calls[0] ?? [])[0] as string;
     expect(promptArg).toContain('v0.3.1..v0.4.0');
     expect(promptArg).toContain(REALISTIC_GIT_LOG);
     expect(promptArg).toContain(REALISTIC_DIFF_STAT);
@@ -276,7 +276,7 @@ describe('runDraftChangelog — tag annotation', () => {
       llm,
     });
 
-    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const promptArg: string = ((llm.complete as ReturnType<typeof vi.fn>).mock.calls[0] ?? [])[0] as string;
     expect(promptArg).toContain('Tag annotation');
     expect(promptArg).toContain(TAG_ANNOTATION);
   });
@@ -296,7 +296,7 @@ describe('runDraftChangelog — tag annotation', () => {
       llm,
     });
 
-    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const promptArg: string = ((llm.complete as ReturnType<typeof vi.fn>).mock.calls[0] ?? [])[0] as string;
     expect(promptArg).not.toContain('Tag annotation');
   });
 });
@@ -382,7 +382,7 @@ describe('runDraftChangelog — git log size limit', () => {
       llm,
     });
 
-    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const promptArg: string = ((llm.complete as ReturnType<typeof vi.fn>).mock.calls[0] ?? [])[0] as string;
     expect(promptArg).toContain(smallLog);
     expect(promptArg).not.toContain('[Note: git log truncated');
   });
@@ -407,7 +407,7 @@ describe('runDraftChangelog — git log size limit', () => {
       llm,
     });
 
-    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const promptArg: string = ((llm.complete as ReturnType<typeof vi.fn>).mock.calls[0] ?? [])[0] as string;
     expect(promptArg).toContain('[Note: git log truncated to most recent 30 commits.');
     expect(promptArg).toContain('Full history had');
     expect(promptArg).toContain('commits.]');
