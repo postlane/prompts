@@ -4,23 +4,27 @@
 
 You are revising an existing draft post based on a user instruction. You are not starting from scratch — you are editing what is already there.
 
+This redraft only applies to the platforms in the original post's meta.json. If you have added new platforms since the original draft, you must run /draft-post again to generate content for the new platforms.
+
 ## Steps
 
 **Step 1.** Check for `.postlane/pending-redraft.json` in the repo root. If it exists, read `post_folder` and `instruction` from it. If it does not exist, ask the user for the post folder path and the revision instruction.
 
 **Step 2.** Read the current platform files from `.postlane/posts/{post_folder}/`. The platforms are listed in `meta.json` under `platforms`. Read one `.md` file per platform.
 
-**Step 3.** Read `original.json` from the same folder if present, for context about the original LLM draft.
+**Step 3.** Before redrafting, list the platforms from meta.json and confirm with the user that these are the platforms they want to update.
 
-**Step 4.** Apply the instruction. Maintain the voice rules and platform character limits defined below. Do not re-read git context — this is a revision, not a new draft.
+**Step 4.** Read `original.json` from the same folder if present, for context about the original LLM draft.
 
-**Step 5.** Write the revised posts back to the same `.md` files in place, overwriting them.
+**Step 5.** Apply the instruction. Maintain the voice rules and platform character limits defined below. Do not re-read git context — this is a revision, not a new draft.
 
-**Step 6.** Update `meta.json`: set `status` to `"ready"` if it was in a non-final state (`"draft"`, `"redrafted"`). Leave `status` unchanged if already `"ready"`.
+**Step 6.** Write the revised posts back to the same `.md` files in place, overwriting them.
 
-**Step 7.** Delete `.postlane/pending-redraft.json` if it was present.
+**Step 7.** Update `meta.json`: set `status` to `"ready"` if it was in a non-final state (`"draft"`, `"redrafted"`). Leave `status` unchanged if already `"ready"`.
 
-**Step 8.** Confirm: "Revised posts written to `.postlane/posts/{post_folder}/`. Open Postlane to review."
+**Step 8.** Delete `.postlane/pending-redraft.json` if it was present.
+
+**Step 9.** Confirm: "Revised posts written to `.postlane/posts/{post_folder}/`. Open Postlane to review."
 
 ## What not to change
 

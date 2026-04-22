@@ -30,9 +30,21 @@ export function applyAttribution(options: ApplyAttributionOptions): AttributionR
   }
 
   const limit = PLATFORM_LIMITS[platform] ?? 500;
-  const withFooter = `${content}\n${ATTRIBUTION_FOOTER}`;
+  const footer = `\n${ATTRIBUTION_FOOTER}`;
+  const withFooter = `${content}${footer}`;
 
   if ([...withFooter].length >= limit) {
+    // For X only: truncate body to always fit the footer, appending '…' if truncated.
+    // Max body codepoints (including '…') = limit - footerCPs
+    if (platform === 'x') {
+      const footerCPs = [...footer].length;
+      const maxBodyCPs = limit - footerCPs;
+      const bodyChars = [...content];
+      if (bodyChars.length >= maxBodyCPs) {
+        const truncated = bodyChars.slice(0, maxBodyCPs - 1).join('') + '…';
+        return { content: `${truncated}${footer}`, warned: false };
+      }
+    }
     return { content, warned: true };
   }
 

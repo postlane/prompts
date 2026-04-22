@@ -28,6 +28,23 @@ async function readSkillFile(skillPath: string): Promise<string> {
   }
 }
 
+const GIT_LOG_MAX_BYTES = 40_000;
+const GIT_LOG_MAX_COMMITS = 30;
+
+function truncateGitLog(gitLog: string): string {
+  if (gitLog.length <= GIT_LOG_MAX_BYTES) {
+    return gitLog;
+  }
+
+  const lines = gitLog.split('\n');
+  const totalCommits = lines.length;
+  const recentLines = lines.slice(-GIT_LOG_MAX_COMMITS);
+  const truncatedLog = recentLines.join('\n');
+
+  const note = `[Note: git log truncated to most recent ${GIT_LOG_MAX_COMMITS} commits. Full history had ${totalCommits} commits.]`;
+  return `${note}\n${truncatedLog}`;
+}
+
 function resolveRange(
   from: string | undefined,
   to: string | undefined,
@@ -61,7 +78,8 @@ export async function runDraftChangelog(
 
   const range = resolveRange(options.from, options.to, tags, initialCommit);
 
-  const gitLog = git.log({ repoPath, from: range.from, to: range.to });
+  const rawGitLog = git.log({ repoPath, from: range.from, to: range.to });
+  const gitLog = truncateGitLog(rawGitLog);
   const diffStat = git.diffStat({ repoPath, from: range.from, to: range.to });
   const tagAnnotation = git.tagAnnotation({ repoPath, tag: range.to });
 

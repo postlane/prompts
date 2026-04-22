@@ -360,3 +360,56 @@ describe('runDraftChangelog — response length guard', () => {
     ).resolves.toBeDefined();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Git log size limit (Fix 2)
+// ---------------------------------------------------------------------------
+
+describe('runDraftChangelog — git log size limit', () => {
+  it('passes git log through unchanged when it is under 40KB', async () => {
+    const smallLog = 'a'.repeat(39_999);
+    const git = makeGitRunner({
+      log: vi.fn().mockReturnValue(smallLog),
+    });
+    const llm = makeLlmRunner();
+
+    await runDraftChangelog({
+      from: 'v0.3.1',
+      to: 'v0.4.0',
+      repoPath: '/fake/repo',
+      skillPath: '/fake/prompts/commands/draft-changelog.md',
+      git,
+      llm,
+    });
+
+    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(promptArg).toContain(smallLog);
+    expect(promptArg).not.toContain('[Note: git log truncated');
+  });
+
+  it('truncates git log and prepends a note when it exceeds 40KB', async () => {
+    // Build a log with 40 commits, each ~1100 bytes, total > 40KB
+    const commitLine = 'x'.repeat(1_100) + '\n';
+    const commits = Array.from({ length: 40 }, (_, i) => `commit${String(i).padStart(3, '0')} ${commitLine}`);
+    const bigLog = commits.join('');
+
+    const git = makeGitRunner({
+      log: vi.fn().mockReturnValue(bigLog),
+    });
+    const llm = makeLlmRunner();
+
+    await runDraftChangelog({
+      from: 'v0.3.1',
+      to: 'v0.4.0',
+      repoPath: '/fake/repo',
+      skillPath: '/fake/prompts/commands/draft-changelog.md',
+      git,
+      llm,
+    });
+
+    const promptArg: string = (llm.complete as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(promptArg).toContain('[Note: git log truncated to most recent 30 commits.');
+    expect(promptArg).toContain('Full history had');
+    expect(promptArg).toContain('commits.]');
+  });
+});

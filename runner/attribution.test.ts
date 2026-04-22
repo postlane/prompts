@@ -53,31 +53,43 @@ describe('applyAttribution — X platform, attribution enabled', () => {
 });
 
 // ---------------------------------------------------------------------------
-// §7.4.6 — test 2: attribution true, body at 270 chars → warn, no footer
+// §7.4.6 — test 2: attribution true, X body too long → truncate and append footer
+//
+// Footer as codepoints: [...'\n📮 postlane.dev'].length = 15
+// Max body codepoints (including '…') = 280 - 15 = 265
+// So: truncate to 264 body chars, append '…' → 265 codepoint body line
+// Total = 265 + 15 = 280 codepoints exactly
 // ---------------------------------------------------------------------------
 
-describe('applyAttribution — X platform, body too long for footer', () => {
-  it('does not append footer when body exceeds headroom (270 chars)', () => {
-    const body = 'a'.repeat(270);
-    const result = applyAttribution({ content: body, platform: 'x', attribution: true });
-
-    expect(result.content).toBe(body);
-    expect(result.content).not.toContain(ATTRIBUTION_FOOTER);
-  });
-
-  it('sets warned: true when footer would exceed the limit', () => {
-    const body = 'a'.repeat(270);
-    const result = applyAttribution({ content: body, platform: 'x', attribution: true });
-
-    expect(result.warned).toBe(true);
-  });
-
-  it('does not append footer when body is exactly 265 chars (one over headroom)', () => {
+describe('applyAttribution — X platform, body too long for footer (truncation)', () => {
+  it('truncates body and appends footer when body is 265 chars, total = 280', () => {
     const body = 'a'.repeat(265);
     const result = applyAttribution({ content: body, platform: 'x', attribution: true });
 
-    expect(result.warned).toBe(true);
-    expect(result.content).not.toContain(ATTRIBUTION_FOOTER);
+    expect(result.warned).toBe(false);
+    expect(result.content).toContain(ATTRIBUTION_FOOTER);
+    expect([...result.content].length).toBe(280);
+    // body line: 264 'a' chars + '…' = 265 codepoints
+    const lines = result.content.split('\n');
+    expect([...lines[0]].length).toBe(265);
+    expect(lines[0]).toMatch(/^a{264}…$/);
+  });
+
+  it('truncates and appends footer when body is 300 chars, total = 280', () => {
+    const body = 'a'.repeat(300);
+    const result = applyAttribution({ content: body, platform: 'x', attribution: true });
+
+    expect(result.warned).toBe(false);
+    expect(result.content).toContain(ATTRIBUTION_FOOTER);
+    expect([...result.content].length).toBe(280);
+  });
+
+  it('attribution disabled: body returned unchanged regardless of length (300 chars)', () => {
+    const body = 'a'.repeat(300);
+    const result = applyAttribution({ content: body, platform: 'x', attribution: false });
+
+    expect(result.content).toBe(body);
+    expect(result.warned).toBe(false);
   });
 });
 

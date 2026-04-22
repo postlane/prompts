@@ -18,13 +18,12 @@ Read the `attribution` field from `config.json` (default `true` if absent).
 
 When attribution is enabled:
 - Append `📮 postlane.dev` as the final line of each platform post
-- For X (280 chars): **CRITICAL — you MUST write the body in 264 characters or fewer.** The footer uses the remaining 16 characters. If you exceed 264 characters, the footer will be dropped automatically and attribution will fail silently. Count carefully before outputting.
+- For X (280 chars): **CRITICAL — you MUST write the body in 264 characters or fewer.** The footer uses the remaining 16 characters. If your body exceeds 264 characters, it will be automatically truncated to fit the footer. Always aim for 264 characters or fewer to avoid truncation.
 - For Bluesky (300 chars) and Mastodon (500 chars): no special headroom required
 
 Do not append the footer when:
 - `attribution: false` is explicitly set in config
 - The active profile has `client: true` in `config.json` (client work)
-- The footer would push the total character count over the platform limit with no headroom
 
 ## Character limits (hard limits)
 
